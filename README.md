@@ -318,12 +318,14 @@ MathJax is used for notation such as ions and isotope symbols, for example:
 ```latex
 $\(\mathrm{Sr}^{2+}\)$
 ```
+Renders as: $\(\mathrm{Sr}^{2+}\)$
 
 and:
 
 ```latex
 $\({}^{97}_{42}\mathrm{Mo}^{2+}\)$
 ```
+Renders as: $\({}^{97}_{42}\mathrm{Mo}^{2+}\)$
 
 Because MathJax is loaded from a CDN, an internet connection is normally required when the page is first opened unless MathJax is modified to be hosted locally.
 
