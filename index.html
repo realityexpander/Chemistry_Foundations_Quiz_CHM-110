@@ -907,6 +907,116 @@
       };
     }
 
+    function q14PlusTwoIons() {
+      const group2 = elements.filter(e => e.group === 2 && e.charge === 2);
+      const group1 = elements.filter(e => e.group === 1 && e.charge === 1);
+      const group13 = elements.filter(e => e.group === 13 && e.charge === 3);
+
+      const correctEls = sample(group2, 3);
+      const wrongGroup1 = sample(group1, 3);
+      const mixedEls = shuffle([
+        pick(group1),
+        pick(group2),
+        pick(group13)
+      ]);
+
+      const formatSet = (arr) => arr.map(e => `${e.name} (${e.symbol})`).join(', ');
+      const correctText = formatSet(correctEls);
+      const optionSets = [
+        { text: correctText, key: 'correct' },
+        { text: formatSet(wrongGroup1), key: 'group1' },
+        { text: formatSet(mixedEls), key: 'mixed' }
+      ];
+      const options = shuffle(optionSets);
+      const correctIndex = options.findIndex(o => o.key === 'correct');
+
+      const group2Names = correctEls.map(e => `${e.name[0].toUpperCase() + e.name.slice(1)} (${e.symbol})`).join(', ');
+      const group1Names = wrongGroup1.map(e => `${e.name[0].toUpperCase() + e.name.slice(1)} (${e.symbol})`).join(', ');
+      const mixedDetails = mixedEls.map(e => `${e.name[0].toUpperCase() + e.name.slice(1)} forms ${ionLatex(e)}`).join('; ');
+
+      return {
+        kind: 'mc',
+        label: 'Type 14 · Elements that form +2 ions',
+        prompt: 'Which of the following sets contains only elements that commonly form <strong>+2 ions</strong>?',
+        options,
+        correctIndex,
+        explanation: () => `
+          <p>The correct set is <strong>${group2Names}</strong>.</p>
+          <h3>Why This Option?</h3>
+          <p>Elements that commonly form \(+2\) ions are found in <strong>Group 2</strong> of the periodic table, also called the <strong>alkaline earth metals</strong>.</p>
+          <ul>
+            <li>Group 2 atoms have <strong>2 valence electrons</strong>.</li>
+            <li>They commonly lose those 2 electrons to reach a more stable outer-shell configuration.</li>
+            <li>Losing 2 negatively charged electrons produces a net <strong>\(+2\)</strong> charge.</li>
+            <li>${group2Names} are all Group 2 elements.</li>
+          </ul>
+          <h3>Why the Other Options Are Incorrect</h3>
+          <ul>
+            <li><strong>${group1Names}:</strong> these are Group 1 alkali metals. They commonly lose 1 valence electron and form \(+1\) ions.</li>
+            <li><strong>The mixed set:</strong> ${mixedDetails}. Because the elements come from different groups, they do not all form \(+2\) ions.</li>
+          </ul>`
+      };
+    }
+
+    function q15NeutronsFromIsotopeName() {
+      const el = pick(elements);
+      const mass = pick(el.masses);
+      const neutrons = mass - el.z;
+      const nums = uniqueNumbers(neutrons, 4, 0, 100, 6);
+      const options = nums.map(n => ({ text: `${n} neutron${n === 1 ? '' : 's'}`, value: n }));
+      const correctIndex = options.findIndex(o => o.value === neutrons);
+
+      return {
+        kind: 'mc',
+        label: 'Type 15 · Neutrons from an isotope name',
+        prompt: `How many neutrons are in <strong>${el.name}-${mass}</strong>?`,
+        options,
+        correctIndex,
+        explanation: () => `
+          <p>There are <strong>${neutrons} neutrons</strong> in ${el.name}-${mass}.</p>
+          <h3>The Calculation</h3>
+          <ul>
+            <li><strong>Mass number:</strong> ${mass}, given by the isotope name ${el.name}-${mass}. It represents protons + neutrons.</li>
+            <li><strong>Atomic number:</strong> ${el.z}, so every ${el.name} atom contains ${el.z} protons.</li>
+          </ul>
+          <p>\(\text{Neutrons}=\text{Mass Number}-\text{Atomic Number}\)</p>
+          <p>\(\text{Neutrons}=${mass}-${el.z}=${neutrons}\)</p>`
+      };
+    }
+
+    function q16IdentifyChalcogenIsotope() {
+      const chalcogens = elements.filter(e => e.group === 16 && e.masses.length >= 3);
+      const el = pick(chalcogens);
+      const mass = pick(el.masses);
+      const neutrons = mass - el.z;
+      const wrongMasses = sample(el.masses.filter(m => m !== mass), 2);
+      const isotopeChoices = shuffle([mass, ...wrongMasses]);
+      const options = isotopeChoices.map(m => ({
+        text: `${el.name}-${m}`,
+        mass: m
+      }));
+      const correctIndex = options.findIndex(o => o.mass === mass);
+
+      return {
+        kind: 'mc',
+        label: 'Type 16 · Identify a chalcogen isotope from neutrons',
+        prompt: `Identify the <strong>chalcogen</strong> isotope that has <strong>${neutrons} neutrons</strong> in the nucleus.`,
+        options,
+        correctIndex,
+        explanation: () => `
+          <p>The correct answer is <strong>${el.name}-${mass}</strong>.</p>
+          <h3>Step-by-Step Breakdown</h3>
+          <ol>
+            <li><strong>Identify the element:</strong> ${el.name[0].toUpperCase() + el.name.slice(1)} (${el.symbol}) is a chalcogen in <strong>Group 16</strong>.</li>
+            <li><strong>Find the proton count:</strong> ${el.name[0].toUpperCase() + el.name.slice(1)} has atomic number ${el.z}, so every ${el.name} atom contains exactly <strong>${el.z} protons</strong>.</li>
+            <li><strong>Calculate the mass number:</strong> add the protons and neutrons.</li>
+          </ol>
+          <p>\(\text{Mass Number}=\text{Protons}+\text{Neutrons}\)</p>
+          <p>\(\text{Mass Number}=${el.z}+${neutrons}=${mass}\)</p>
+          <p>Therefore, the isotope is <strong>${el.name}-${mass}</strong>, written ${isotopeLatex(el, mass)}.</p>`
+      };
+    }
+
     const generators = [
       { id: '1',   name: 'Type 1 — Gain/lose electrons for stability', fn: q1StableGainLose },
       { id: '2',   name: 'Type 2 — Identify element from electrons + charge', fn: q2IdentifyElementFromIon },
@@ -921,7 +1031,10 @@
       { id: '10',  name: 'Type 10 — Transition vs representative groups', fn: q10GroupsTrueFalse },
       { id: '11',  name: 'Type 11 — What is a cation?', fn: q11Cation },
       { id: '12',  name: 'Type 12 — Proton count terminology', fn: q12AtomicNumber },
-      { id: '13',  name: 'Type 13 — What is an anion?', fn: q13Anion }
+      { id: '13',  name: 'Type 13 — What is an anion?', fn: q13Anion },
+      { id: '14',  name: 'Type 14 — Which elements form +2 ions?', fn: q14PlusTwoIons },
+      { id: '15',  name: 'Type 15 — Find neutrons from an isotope name', fn: q15NeutronsFromIsotopeName },
+      { id: '16',  name: 'Type 16 — Identify chalcogen isotope from neutrons', fn: q16IdentifyChalcogenIsotope }
     ];
 
     // -----------------------------
