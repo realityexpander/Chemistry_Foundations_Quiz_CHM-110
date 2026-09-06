@@ -4,7 +4,7 @@ A single-page, browser-based chemistry quiz application for practicing introduct
 
 The quiz generates randomized questions and answer choices rather than relying on a fixed question bank. It gives immediate feedback, detailed step-by-step explanations, and keeps a running score so students can practice the same concepts repeatedly with different values and elements.
 
-<img width="477" height="757" alt="image" src="https://github.com/user-attachments/assets/e2568159-d11b-4327-86a6-772fc83a636c" />
+<img width="477" alt="image" src="https://github.com/user-attachments/assets/e2568159-d11b-4327-86a6-772fc83a636c" />
 
 
 Link to live app: https://realityexpander.github.io/Chemistry_Foundations_Quiz_CHM-110/
