@@ -1,14 +1,10 @@
 # Chemistry Foundations Quiz
 
-A single-page, browser-based chemistry quiz application for practicing introductory chemistry concepts related to atomic structure, ions, isotopes, periodicity, and nuclear symbol notation. This app was designed specifically for Midlands Technical College Chemistry 110 (CHM-110) taught by Professor Gordon.
+A single-page, browser-based chemistry quiz application for practicing introductory chemistry concepts related to atomic structure, ions, isotopes, periodicity, and nuclear symbol notation.
+
+This app was designed specifically for Midlands Technical College Chemistry 110 (CHM-110) taught by Professor Gordon.
 
 The quiz generates randomized questions and answer choices rather than relying on a fixed question bank. It gives immediate feedback, detailed step-by-step explanations, and keeps a running score so students can practice the same concepts repeatedly with different values and elements.
-
-<img width="480" alt="image" src="https://github.com/user-attachments/assets/26866e48-ad5d-4c74-b51f-f53cd9e37f56" />
-
-
-
-Link to live app: https://realityexpander.github.io/Chemistry_Foundations_Quiz_CHM-110/
 
 ## Main Purpose
 
@@ -29,6 +25,8 @@ The app is designed to help students practice both:
 - Individual practice mode for selecting a specific question type
 - Immediate correct/incorrect feedback
 - Detailed explanations after answering
+- A matching visual study diagram appears only after an answer is submitted
+- 16 study diagrams stored locally in the repository under `images/`
 - Running score for:
   - correct answers
   - incorrect answers
@@ -38,7 +36,7 @@ The app is designed to help students practice both:
 - MathJax rendering for chemical ions, isotopes, nuclear notation, superscripts, subscripts, and equations
 - Responsive single-page interface
 - No server-side code or database required
-- Entire application contained in one HTML file
+- Static front-end application: `index.html` plus the local `images/` asset folder
 
 ## Chemistry Concepts Covered
 
@@ -97,7 +95,9 @@ For neutral isotopes, the number of electrons is also the same.
 
 The quiz generates questions involving notation such as:
 
-${}^{52}_{23}\mathrm{V}$
+\[
+{}^{52}_{23}\mathrm{V}
+\]
 
 Students identify:
 
@@ -128,7 +128,9 @@ Examples include concepts such as:
 
 Questions use complete nuclear/ion notation such as:
 
-${}^{97}_{42}\mathrm{Mo}^{2+}$
+\[
+{}^{97}_{42}\mathrm{Mo}^{2+}
+\]
 
 Students calculate:
 
@@ -171,26 +173,25 @@ Students identify the atomic number as the number of protons in the nucleus of a
 
 Students identify an anion as an atom or species that has **gained electrons** and therefore has a **negative charge**.
 
-### 14. Elements that form +2 ions
+### 14. Group 2 and +2 Ions
 
-- Randomly generates three Group 2 elements as the correct set.
-- Generates Group 1 and mixed-group distractors.
-- Explains valence electrons, Group 2, and why the other sets are incorrect.
+Students recognize that Group 2 (alkaline earth) elements commonly lose two valence electrons and form `2+` ions.
 
-### 15. Neutrons from an isotope name
+### 15. Counting Neutrons from an Isotope Name
 
-Randomly selects an element and isotope from your existing element data.
+Students determine neutron count using:
 
-Calculates:
+```text
+neutrons = mass number - atomic number
+```
 
-$$ \text{Neutrons}=\text{Mass Number}-\text{Atomic Number} $$
-Generates four randomized numerical choices and a step-by-step explanation.
+### 16. Chalcogens and Isotope Identification
 
-### 16. Identify a chalcogen isotope
-- Randomly selects O, S, Se, or Te and one of its listed isotopes.
-- Gives a neutron count and asks the student to identify the correct isotope.
-- Generates two other isotopes of that same element as distractors.
-- Explains the Group 16/chalcogen identification and mass-number calculation.
+Students identify Group 16 (chalcogen) isotopes from proton and neutron information using:
+
+```text
+mass number = protons + neutrons
+```
 
 ## Question Modes
 
@@ -211,118 +212,7 @@ The two isotope-related formats originally identified as Question Type 4 are rep
 - **Type 4A — Compare isotopes**
 - **Type 4B — Nuclear symbol notation**
 
-## Score Tracking
-
-The quiz maintains a running record of:
-
-```text
-Correct
-Incorrect
-Answered
-Percent Correct
-```
-
-Score information is saved using browser `localStorage` when available. This means the current score can survive a page refresh or browser restart on the same browser/device.
-
-No score information is transmitted to a server.
-
-The score can also be reset from within the application.
-
-## Random Question Generation
-
-The application uses JavaScript question-generator functions rather than a single static list of questions.
-
-Depending on the question type, the generator can randomize values such as:
-
-- element
-- atomic number
-- mass number
-- neutron count
-- electron count
-- ion charge
-- isotope pair
-- periodic-table group relationships
-- correct and incorrect answer choices
-- answer-choice order
-
-This allows the same chemistry rule to be practiced repeatedly with different examples.
-
-## Browser Requirements
-
-A modern browser with JavaScript enabled is required.
-
-Recommended browsers include current versions of:
-
-- Google Chrome
-- Mozilla Firefox
-- Microsoft Edge
-- Apple Safari
-
-Internet access is required for the default MathJax CDN configuration.
-
-## Educational Use
-
-This application is intended as a practice and study aid for introductory chemistry. The generated explanations are designed to reinforce the reasoning behind each answer rather than simply identify whether an answer is correct.
-
-It is particularly useful for practicing relationships among:
-
-```text
-atomic number -> protons
-mass number -> protons + neutrons
-ion charge -> relationship between protons and electrons
-periodic-table group -> common valence behavior
-```
-
-## Customization
-
-Because the project uses plain HTML, CSS, and JavaScript, additional question generators can be added directly to the source without requiring a compilation or build step.
-
-Possible future additions include:
-
-- electron configurations
-- Lewis dot structures
-- periodic trends
-- ionic compound formulas
-- molecular naming
-- significant figures
-- dimensional analysis
-- molar mass calculations
-- balancing chemical equations
-
-## Project Structure
-
-The project can be distributed as a single file:
-
-```text
-chemistry_quiz.html
-```
-
-The file contains:
-
-```text
-HTML        Page structure
-CSS         Interface and responsive styling
-JavaScript  Quiz logic and question generation
-MathJax     Loaded externally for LaTeX rendering
-```
-
-A minimal repository might therefore look like:
-
-```text
-chemistry-quiz/
-├── chemistry_quiz.html
-└── README.md
-```
-
-For GitHub Pages, a convenient structure is:
-
-```text
-chemistry-quiz/
-├── index.html
-└── README.md
-```
-
-- ## Libraries Used
+## Libraries Used
 
 ### MathJax 4
 
@@ -337,16 +227,14 @@ The application loads MathJax from the jsDelivr CDN:
 MathJax is used for notation such as ions and isotope symbols, for example:
 
 ```latex
-$\(\mathrm{Sr}^{2+}\)$
+\(\mathrm{Sr}^{2+}\)
 ```
-Renders as: $\(\mathrm{Sr}^{2+}\)$
 
 and:
 
 ```latex
-$\({}^{97}_{42}\mathrm{Mo}^{2+}\)$
+\({}^{97}_{42}\mathrm{Mo}^{2+}\)
 ```
-Renders as: $\({}^{97}_{42}\mathrm{Mo}^{2+}\)$
 
 Because MathJax is loaded from a CDN, an internet connection is normally required when the page is first opened unless MathJax is modified to be hosted locally.
 
@@ -369,7 +257,7 @@ No framework, build system, package manager, web server, or database is required
 The simplest installation method is to download the repository and open the HTML file in a modern web browser.
 
 1. Clone or download this repository.
-2. Locate the quiz HTML file.
+2. Locate `index.html`.
 3. Double-click the file or open it with a browser such as Chrome, Firefox, Edge, or Safari.
 
 For example:
@@ -377,7 +265,7 @@ For example:
 ```bash
 git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
 cd YOUR-REPOSITORY
-open chemistry_quiz.html
+open index.html
 ```
 
 On macOS, the `open` command launches the file in the default browser.
@@ -387,7 +275,7 @@ On Windows, the file can simply be opened from File Explorer.
 On Linux, a command such as the following can be used:
 
 ```bash
-xdg-open chemistry_quiz.html
+xdg-open index.html
 ```
 
 ## Option 2: Run with a Local Web Server
@@ -433,6 +321,113 @@ index.html
 
 The application can then be served as a completely static GitHub Pages site.
 
+## Score Tracking
+
+The quiz maintains a running record of:
+
+```text
+Correct
+Incorrect
+Answered
+Percent Correct
+```
+
+Score information is saved using browser `localStorage` when available. This means the current score can survive a page refresh or browser restart on the same browser/device.
+
+No score information is transmitted to a server.
+
+The score can also be reset from within the application.
+
+## Random Question Generation
+
+The application uses JavaScript question-generator functions rather than a single static list of questions.
+
+Depending on the question type, the generator can randomize values such as:
+
+- element
+- atomic number
+- mass number
+- neutron count
+- electron count
+- ion charge
+- isotope pair
+- periodic-table group relationships
+- correct and incorrect answer choices
+- answer-choice order
+
+This allows the same chemistry rule to be practiced repeatedly with different examples.
+
+## Project Structure
+
+The quiz is a static front-end site. The HTML/CSS/JavaScript remain in `index.html`, while the 16 visual study diagrams are stored as repository assets in `images/`:
+
+```text
+Chemistry_Foundations_Quiz_CHM-110/
+├── index.html
+├── README.md
+└── images/
+    ├── type01-stable-ion.png
+    ├── type02-identify-element.png
+    ├── type03-chemistry-terms.png
+    ├── type04-isotopes-nuclear-symbols.png
+    ├── type05-stable-cation-electrons.png
+    ├── type06-ion-pne-notation.png
+    ├── type07-stable-anion-electrons.png
+    ├── type08-isotopes-neutrons.png
+    ├── type09-periodicity.png
+    ├── type10-periodic-table-groups.png
+    ├── type11-cation.png
+    ├── type12-atomic-number.png
+    ├── type13-anion.png
+    ├── type14-group2-ions.png
+    ├── type15-counting-neutrons.png
+    └── type16-chalcogen-isotope.png
+```
+
+The image paths in `index.html` are relative paths such as `images/type01-stable-ion.png`. This makes the same files work when opened locally or deployed through GitHub Pages. The diagrams are inserted into the page only after the student submits an answer, so they act as visual explanations rather than revealing the answer in advance.
+
+## Browser Requirements
+
+A modern browser with JavaScript enabled is required.
+
+Recommended browsers include current versions of:
+
+- Google Chrome
+- Mozilla Firefox
+- Microsoft Edge
+- Apple Safari
+
+Internet access is required for the default MathJax CDN configuration.
+
+## Educational Use
+
+This application is intended as a practice and study aid for introductory chemistry. The generated explanations are designed to reinforce the reasoning behind each answer rather than simply identify whether an answer is correct.
+
+It is particularly useful for practicing relationships among:
+
+```text
+atomic number -> protons
+mass number -> protons + neutrons
+ion charge -> relationship between protons and electrons
+periodic-table group -> common valence behavior
+```
+
+## Customization
+
+Because the project uses plain HTML, CSS, and JavaScript, additional question generators can be added directly to the source without requiring a compilation or build step.
+
+Possible future additions include:
+
+- electron configurations
+- Lewis dot structures
+- periodic trends
+- ionic compound formulas
+- molecular naming
+- significant figures
+- dimensional analysis
+- molar mass calculations
+- balancing chemical equations
+
 ## License
 
-Standard MIT License.
+No license is included by default. If this repository will be distributed publicly, add an appropriate open-source license such as the MIT License.

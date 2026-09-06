@@ -193,6 +193,43 @@
     .feedback p { margin: 7px 0; }
     .feedback ul, .feedback ol { margin-top: 7px; }
 
+
+    .study-diagram-card {
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #f8faff;
+      box-shadow: 0 8px 24px rgba(27, 39, 70, 0.06);
+    }
+
+    .study-diagram-header {
+      padding: 13px 16px;
+      background: #edf2ff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .study-diagram-header h2 {
+      margin: 0;
+      color: #23499d;
+      font-size: 1.12rem;
+    }
+
+    .study-diagram-header p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .study-diagram-image {
+      display: block;
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      margin: 0 auto;
+      background: white;
+    }
+
     .match-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(190px, 280px);
@@ -478,6 +515,28 @@
           <h2>${isCorrect ? '✓ Correct' : '✗ Incorrect'}</h2>
           ${bodyHtml}
         </div>
+      `;
+    }
+
+
+    function studyDiagramBox(imagePath, questionName) {
+      if (!imagePath) return '';
+      const safePath = htmlEscape(imagePath);
+      const safeName = htmlEscape(questionName || 'this question type');
+      return `
+        <section class="study-diagram-card" aria-label="Study diagram">
+          <div class="study-diagram-header">
+            <h2>Study Diagram</h2>
+            <p>Visual review for ${safeName}. This appears only after you answer.</p>
+          </div>
+          <img
+            class="study-diagram-image"
+            src="${safePath}"
+            alt="Study diagram for ${safeName}"
+            loading="lazy"
+            decoding="async"
+          >
+        </section>
       `;
     }
 
@@ -1018,23 +1077,23 @@
     }
 
     const generators = [
-      { id: '1',   name: 'Type 1 — Gain/lose electrons for stability', fn: q1StableGainLose },
-      { id: '2',   name: 'Type 2 — Identify element from electrons + charge', fn: q2IdentifyElementFromIon },
-      { id: '3',   name: 'Type 3 — Match definitions', fn: q3Matching },
-      { id: '4a',  name: 'Type 4A — Compare isotopes', fn: q4AIsotopeComparison },
-      { id: '4b',  name: 'Type 4B — Nuclear symbol notation', fn: q4BNuclearSymbol },
-      { id: '5',   name: 'Type 5 — Electrons in stable cation', fn: q5StableCationElectrons },
-      { id: '6',   name: 'Type 6 — Protons/neutrons/electrons in an ion', fn: q6PNEFromIonNotation },
-      { id: '7',   name: 'Type 7 — Electrons in stable anion', fn: q7StableAnionElectrons },
-      { id: '8',   name: 'Type 8 — What differs in isotopes?', fn: q8IsotopeDifference },
-      { id: '9',   name: 'Type 9 — Periodicity / similar behavior', fn: q9Periodicity },
-      { id: '10',  name: 'Type 10 — Transition vs representative groups', fn: q10GroupsTrueFalse },
-      { id: '11',  name: 'Type 11 — What is a cation?', fn: q11Cation },
-      { id: '12',  name: 'Type 12 — Proton count terminology', fn: q12AtomicNumber },
-      { id: '13',  name: 'Type 13 — What is an anion?', fn: q13Anion },
-      { id: '14',  name: 'Type 14 — Which elements form +2 ions?', fn: q14PlusTwoIons },
-      { id: '15',  name: 'Type 15 — Find neutrons from an isotope name', fn: q15NeutronsFromIsotopeName },
-      { id: '16',  name: 'Type 16 — Identify chalcogen isotope from neutrons', fn: q16IdentifyChalcogenIsotope }
+      { id: '1',   name: 'Type 1 — Gain/lose electrons for stability', fn: q1StableGainLose, image: 'images/type01-stable-ion.png' },
+      { id: '2',   name: 'Type 2 — Identify element from electrons + charge', fn: q2IdentifyElementFromIon, image: 'images/type02-identify-element.png' },
+      { id: '3',   name: 'Type 3 — Match definitions', fn: q3Matching, image: 'images/type03-chemistry-terms.png' },
+      { id: '4a',  name: 'Type 4A — Compare isotopes', fn: q4AIsotopeComparison, image: 'images/type04-isotopes-nuclear-symbols.png' },
+      { id: '4b',  name: 'Type 4B — Nuclear symbol notation', fn: q4BNuclearSymbol, image: 'images/type04-isotopes-nuclear-symbols.png' },
+      { id: '5',   name: 'Type 5 — Electrons in stable cation', fn: q5StableCationElectrons, image: 'images/type05-stable-cation-electrons.png' },
+      { id: '6',   name: 'Type 6 — Protons/neutrons/electrons in an ion', fn: q6PNEFromIonNotation, image: 'images/type06-ion-pne-notation.png' },
+      { id: '7',   name: 'Type 7 — Electrons in stable anion', fn: q7StableAnionElectrons, image: 'images/type07-stable-anion-electrons.png' },
+      { id: '8',   name: 'Type 8 — What differs in isotopes?', fn: q8IsotopeDifference, image: 'images/type08-isotopes-neutrons.png' },
+      { id: '9',   name: 'Type 9 — Periodicity / similar behavior', fn: q9Periodicity, image: 'images/type09-periodicity.png' },
+      { id: '10',  name: 'Type 10 — Transition vs representative groups', fn: q10GroupsTrueFalse, image: 'images/type10-periodic-table-groups.png' },
+      { id: '11',  name: 'Type 11 — What is a cation?', fn: q11Cation, image: 'images/type11-cation.png' },
+      { id: '12',  name: 'Type 12 — Proton count terminology', fn: q12AtomicNumber, image: 'images/type12-atomic-number.png' },
+      { id: '13',  name: 'Type 13 — What is an anion?', fn: q13Anion, image: 'images/type13-anion.png' },
+      { id: '14',  name: 'Type 14 — Which elements form +2 ions?', fn: q14PlusTwoIons, image: 'images/type14-group2-ions.png' },
+      { id: '15',  name: 'Type 15 — Find neutrons from an isotope name', fn: q15NeutronsFromIsotopeName, image: 'images/type15-counting-neutrons.png' },
+      { id: '16',  name: 'Type 16 — Identify chalcogen isotope from neutrons', fn: q16IdentifyChalcogenIsotope, image: 'images/type16-chalcogen-isotope.png' }
     ];
 
     // -----------------------------
@@ -1100,6 +1159,8 @@
       const generator = chooseGenerator();
       lastGeneratorId = generator.id;
       currentQuestion = generator.fn();
+      currentQuestion.studyImage = generator.image;
+      currentQuestion.generatorName = generator.name;
       answeredCurrent = false;
       $('feedbackArea').innerHTML = '';
       $('submitBtn').hidden = false;
@@ -1162,7 +1223,9 @@
       recordResult(correct);
       $('submitBtn').hidden = true;
       $('nextBtn').hidden = false;
-      $('feedbackArea').innerHTML = feedbackBox(correct, currentQuestion.explanation());
+      $('feedbackArea').innerHTML =
+        feedbackBox(correct, currentQuestion.explanation()) +
+        studyDiagramBox(currentQuestion.studyImage, currentQuestion.generatorName);
       typeset($('feedbackArea'));
     }
 
