@@ -171,6 +171,27 @@ Students identify the atomic number as the number of protons in the nucleus of a
 
 Students identify an anion as an atom or species that has **gained electrons** and therefore has a **negative charge**.
 
+### 14. Elements that form +2 ions
+
+- Randomly generates three Group 2 elements as the correct set.
+- Generates Group 1 and mixed-group distractors.
+- Explains valence electrons, Group 2, and why the other sets are incorrect.
+
+### 15. Neutrons from an isotope name
+
+Randomly selects an element and isotope from your existing element data.
+
+Calculates:
+
+$$ \text{Neutrons}=\text{Mass Number}-\text{Atomic Number} $$
+Generates four randomized numerical choices and a step-by-step explanation.
+
+### 16. Identify a chalcogen isotope
+- Randomly selects O, S, Se, or Te and one of its listed isotopes.
+- Gives a neutron count and asks the student to identify the correct isotope.
+- Generates two other isotopes of that same element as distractors.
+- Explains the Group 16/chalcogen identification and mass-number calculation.
+
 ## Question Modes
 
 The question selector provides two ways to use the quiz.
