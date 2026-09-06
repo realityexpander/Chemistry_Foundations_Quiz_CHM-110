@@ -91,9 +91,7 @@ For neutral isotopes, the number of electrons is also the same.
 
 The quiz generates questions involving notation such as:
 
-\[
-{}^{52}_{23}\mathrm{V}
-\]
+${}^{52}_{23}\mathrm{V}$
 
 Students identify:
 
@@ -124,9 +122,9 @@ Examples include concepts such as:
 
 Questions use complete nuclear/ion notation such as:
 
-\[
+$\[
 {}^{97}_{42}\mathrm{Mo}^{2+}
-\]
+\]$
 
 Students calculate:
 
@@ -410,4 +408,4 @@ Possible future additions include:
 
 ## License
 
-No license is included by default. If this repository will be distributed publicly, add an appropriate open-source license such as the MIT License.
+Standard MIT License.
