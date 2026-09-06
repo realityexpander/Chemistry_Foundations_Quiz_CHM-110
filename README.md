@@ -1,6 +1,6 @@
 # Chemistry Foundations Quiz
 
-A single-page, browser-based chemistry quiz application for practicing introductory chemistry concepts related to atomic structure, ions, isotopes, periodicity, and nuclear symbol notation.
+A single-page, browser-based chemistry quiz application for practicing introductory chemistry concepts related to atomic structure, ions, isotopes, periodicity, and nuclear symbol notation. This app was designed specifically for Midlands Technical College Chemistry 110 (CHM-110) taught by Professor Gordon.
 
 The quiz generates randomized questions and answer choices rather than relying on a fixed question bank. It gives immediate feedback, detailed step-by-step explanations, and keeps a running score so students can practice the same concepts repeatedly with different values and elements.
 
