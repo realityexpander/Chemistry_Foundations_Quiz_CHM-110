@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chemistry Foundations Quiz</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9e0ea;
+      --accent: #2357d8;
+      --accent-dark: #173f9f;
+      --good: #117a48;
+      --good-bg: #eaf8f0;
+      --bad: #b42318;
+      --bad-bg: #fff0ee;
+      --warn: #8a5b00;
+      --shadow: 0 10px 30px rgba(27, 39, 70, 0.08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    button, select { font: inherit; }
+
+    .page {
+      width: min(1000px, calc(100% - 28px));
+      margin: 28px auto 60px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #163b91, #2c67e8);
+      color: white;
+      padding: 28px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .hero h1 { margin: 0 0 6px; font-size: clamp(1.8rem, 5vw, 2.8rem); }
+    .hero p { margin: 0; opacity: 0.9; }
+
+    .toolbar, .scoreboard, .quiz-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: end;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .toolbar label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    select {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: white;
+      padding: 8px 10px;
+      color: var(--text);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: 0.15s ease;
+      min-height: 44px;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent-dark); }
+    .btn-secondary { background: #edf2ff; color: #23499d; }
+    .btn-danger { background: #fff0ee; color: var(--bad); }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .score-item {
+      padding: 15px 18px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .score-item:last-child { border-right: 0; }
+    .score-label { display: block; font-size: 0.8rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+    .score-value { display: block; font-size: 1.55rem; font-weight: 850; margin-top: 2px; }
+
+    .quiz-card { padding: clamp(18px, 4vw, 32px); }
+
+    .type-badge {
+      display: inline-block;
+      background: #edf2ff;
+      color: #23499d;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: .8rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .question {
+      font-size: clamp(1.18rem, 2.5vw, 1.55rem);
+      font-weight: 800;
+      margin: 0 0 20px;
+    }
+
+    .choices { display: grid; gap: 10px; }
+
+    .choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 14px;
+      cursor: pointer;
+      background: white;
+      transition: .12s ease;
+    }
+
+    .choice:hover { border-color: #9db3e9; background: #f8faff; }
+    .choice input { margin-top: 5px; transform: scale(1.1); }
+    .choice.selected { border-color: #7f9de8; background: #f3f6ff; }
+    .choice.correct { border-color: #70c69b; background: var(--good-bg); }
+    .choice.incorrect { border-color: #f0a69e; background: var(--bad-bg); }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .feedback {
+      margin-top: 22px;
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid var(--border);
+    }
+    .feedback.good { background: var(--good-bg); border-color: #a6ddbf; }
+    .feedback.bad { background: var(--bad-bg); border-color: #f4bbb5; }
+    .feedback h2 { margin: 0 0 8px; font-size: 1.2rem; }
+    .feedback.good h2 { color: var(--good); }
+    .feedback.bad h2 { color: var(--bad); }
+    .feedback h3 { margin: 18px 0 7px; font-size: 1rem; }
+    .feedback p { margin: 7px 0; }
+    .feedback ul, .feedback ol { margin-top: 7px; }
+
+    .match-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(190px, 280px);
+      gap: 12px 16px;
+      align-items: center;
+    }
+
+    .match-row { display: contents; }
+    .match-def {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px;
+      background: #fbfcff;
+    }
+    .match-select.correct { border: 2px solid #4baa78; background: var(--good-bg); }
+    .match-select.incorrect { border: 2px solid #da766d; background: var(--bad-bg); }
+
+    .correct-answer-note {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-top: 12px;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: .86rem;
+      margin-top: 16px;
+    }
+
+    mjx-container { overflow-x: auto; overflow-y: hidden; }
+
+    @media (max-width: 720px) {
+      .toolbar { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: repeat(2, 1fr); }
+      .score-item:nth-child(2) { border-right: 0; }
+      .score-item:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+      .match-grid { grid-template-columns: 1fr; }
+      .match-row { display: grid; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>Chemistry Foundations Quiz</h1>
+      <p>Randomized practice for ions, isotopes, atomic structure, periodicity, and chemical notation.</p>
+    </section>
+
+    <section class="toolbar" aria-label="Quiz controls">
+      <div>
+        <label for="modeSelect">Practice mode</label>
+        <select id="modeSelect"></select>
+      </div>
+      <button class="btn btn-secondary" id="newBtn" type="button">New Question</button>
+      <button class="btn btn-danger" id="resetBtn" type="button">Reset Score</button>
+    </section>
+
+    <section class="scoreboard" aria-label="Score">
+      <div class="score-item"><span class="score-label">Correct</span><span class="score-value" id="correctScore">0</span></div>
+      <div class="score-item"><span class="score-label">Incorrect</span><span class="score-value" id="incorrectScore">0</span></div>
+      <div class="score-item"><span class="score-label">Answered</span><span class="score-value" id="answeredScore">0</span></div>
+      <div class="score-item"><span class="score-label">Percent</span><span class="score-value" id="percentScore">0%</span></div>
+    </section>
+
+    <section class="quiz-card" id="quizCard">
+      <div id="questionArea"></div>
+      <div class="actions">
+        <button class="btn btn-primary" id="submitBtn" type="button">Check Answer</button>
+        <button class="btn btn-secondary" id="nextBtn" type="button" hidden>Next Question</button>
+      </div>
+      <div id="feedbackArea"></div>
+    </section>
+
+    <p class="footer-note">Score is saved in browser local storage when available. Math notation is rendered with MathJax.</p>
+  </main>
+
+  <script>
+    // -----------------------------
+    // Data
+    // -----------------------------
+    const elements = [
+      { z: 3,  symbol: 'Li', name: 'lithium',    group: 1,  charge:  1, masses: [6, 7] },
+      { z: 11, symbol: 'Na', name: 'sodium',     group: 1,  charge:  1, masses: [23] },
+      { z: 19, symbol: 'K',  name: 'potassium',  group: 1,  charge:  1, masses: [39, 41] },
+      { z: 4,  symbol: 'Be', name: 'beryllium',  group: 2,  charge:  2, masses: [9] },
+      { z: 12, symbol: 'Mg', name: 'magnesium',  group: 2,  charge:  2, masses: [24, 25, 26] },
+      { z: 20, symbol: 'Ca', name: 'calcium',    group: 2,  charge:  2, masses: [40, 42, 44] },
+      { z: 38, symbol: 'Sr', name: 'strontium',  group: 2,  charge:  2, masses: [86, 87, 88] },
+      { z: 13, symbol: 'Al', name: 'aluminum',   group: 13, charge:  3, masses: [27] },
+      { z: 31, symbol: 'Ga', name: 'gallium',    group: 13, charge:  3, masses: [69, 71] },
+      { z: 7,  symbol: 'N',  name: 'nitrogen',   group: 15, charge: -3, masses: [14, 15] },
+      { z: 15, symbol: 'P',  name: 'phosphorus', group: 15, charge: -3, masses: [31] },
+      { z: 8,  symbol: 'O',  name: 'oxygen',     group: 16, charge: -2, masses: [16, 17, 18] },
+      { z: 16, symbol: 'S',  name: 'sulfur',     group: 16, charge: -2, masses: [32, 33, 34, 36] },
+      { z: 34, symbol: 'Se', name: 'selenium',   group: 16, charge: -2, masses: [74, 76, 78, 80, 82] },
+      { z: 52, symbol: 'Te', name: 'tellurium',  group: 16, charge: -2, masses: [120, 122, 124, 126, 128, 130] },
+      { z: 9,  symbol: 'F',  name: 'fluorine',   group: 17, charge: -1, masses: [19] },
+      { z: 17, symbol: 'Cl', name: 'chlorine',   group: 17, charge: -1, masses: [35, 37] },
+      { z: 35, symbol: 'Br', name: 'bromine',    group: 17, charge: -1, masses: [79, 81] },
+      { z: 53, symbol: 'I',  name: 'iodine',     group: 17, charge: -1, masses: [127] }
+    ];
+
+    const periodicityPool = [
+      { z: 3,  symbol: 'Li', name: 'lithium',    group: 1 },
+      { z: 11, symbol: 'Na', name: 'sodium',     group: 1 },
+      { z: 19, symbol: 'K',  name: 'potassium',  group: 1 },
+      { z: 4,  symbol: 'Be', name: 'beryllium',  group: 2 },
+      { z: 12, symbol: 'Mg', name: 'magnesium',  group: 2 },
+      { z: 20, symbol: 'Ca', name: 'calcium',    group: 2 },
+      { z: 5,  symbol: 'B',  name: 'boron',      group: 13 },
+      { z: 13, symbol: 'Al', name: 'aluminum',   group: 13 },
+      { z: 6,  symbol: 'C',  name: 'carbon',     group: 14 },
+      { z: 14, symbol: 'Si', name: 'silicon',    group: 14 },
+      { z: 7,  symbol: 'N',  name: 'nitrogen',   group: 15 },
+      { z: 15, symbol: 'P',  name: 'phosphorus', group: 15 },
+      { z: 8,  symbol: 'O',  name: 'oxygen',     group: 16 },
+      { z: 16, symbol: 'S',  name: 'sulfur',     group: 16 },
+      { z: 34, symbol: 'Se', name: 'selenium',   group: 16 },
+      { z: 9,  symbol: 'F',  name: 'fluorine',   group: 17 },
+      { z: 17, symbol: 'Cl', name: 'chlorine',   group: 17 },
+      { z: 35, symbol: 'Br', name: 'bromine',    group: 17 },
+      { z: 2,  symbol: 'He', name: 'helium',     group: 18 },
+      { z: 10, symbol: 'Ne', name: 'neon',       group: 18 },
+      { z: 18, symbol: 'Ar', name: 'argon',      group: 18 }
+    ];
+
+    const matchingTerms = [
+      { term: 'number of protons', definition: 'Determines the identity of the element.' },
+      { term: 'mass number', definition: 'The number of protons plus neutrons in an atom.' },
+      { term: 'isotope', definition: 'An atom of an element with a different number of neutrons.' },
+      { term: 'cation', definition: 'An atom or ion that has lost electrons and has a positive charge.' },
+      { term: 'anion', definition: 'An atom or ion that has gained electrons and has a negative charge.' },
+      { term: 'atomic mass', definition: 'The weighted average mass of the naturally occurring isotopes of an element.' },
+      { term: 'atomic number', definition: 'The number of protons in the nucleus of an atom.' },
+      { term: 'neutron', definition: 'A neutral subatomic particle found in the nucleus.' },
+      { term: 'electron', definition: 'A negatively charged subatomic particle found outside the nucleus.' },
+      { term: 'valence electrons', definition: 'Electrons in the outermost occupied energy level that are important in bonding.' }
+    ];
+
+    // -----------------------------
+    // Helpers
+    // -----------------------------
+    const $ = (id) => document.getElementById(id);
+    const choiceLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function sample(arr, count) {
+      return shuffle(arr).slice(0, count);
+    }
+
+    function uniqueNumbers(correct, count, min = 0, max = 100, spread = 8) {
+      const values = new Set([correct]);
+      let attempts = 0;
+      while (values.size < count && attempts < 100) {
+        let v = correct + randInt(-spread, spread);
+        if (v < min || v > max || v === correct) {
+          v = randInt(min, max);
+        }
+        values.add(v);
+        attempts++;
+      }
+      return shuffle([...values]).slice(0, count);
+    }
+
+    function chargeText(charge) {
+      if (charge === 0) return '';
+      const mag = Math.abs(charge);
+      if (mag === 1) return charge > 0 ? '+' : '-';
+      return charge > 0 ? `${mag}+` : `${mag}-`;
+    }
+
+    function ionLatex(el, charge = el.charge) {
+      if (!charge) return `\\(\\text{${el.symbol}}\\)`;
+      return `\\(\\text{${el.symbol}}^{${chargeText(charge)}}\\)`;
+    }
+
+    function isotopeLatex(el, mass, charge = 0) {
+      const c = charge ? `^{${chargeText(charge)}}` : '';
+      return `\\(^{${mass}}_{${el.z}}\\text{${el.symbol}}${c}\\)`;
+    }
+
+    function groupValence(group) {
+      if (group <= 2) return group;
+      if (group >= 13 && group <= 18) return group - 10;
+      return null;
+    }
+
+    function articleFor(word) {
+      return /^[aeiou]/i.test(word) ? 'an' : 'a';
+    }
+
+    function typeset(target = document.body) {
+      if (window.MathJax?.typesetPromise) {
+        MathJax.typesetClear?.([target]);
+        MathJax.typesetPromise([target]).catch(err => console.error('MathJax error:', err));
+      }
+    }
+
+    function htmlEscape(s) {
+      return String(s)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function renderMC(question) {
+      const area = $('questionArea');
+      area.innerHTML = `
+        <div class="type-badge">${htmlEscape(question.label)}</div>
+        <div class="question">${question.prompt}</div>
+        <div class="choices" id="choicesArea">
+          ${question.options.map((opt, i) => `
+            <label class="choice" data-index="${i}">
+              <input type="radio" name="answer" value="${i}">
+              <span><strong>${choiceLetters[i]}.</strong> ${opt.html ?? htmlEscape(opt.text)}</span>
+            </label>
+          `).join('')}
+        </div>
+        ${question.note ? `<div class="small-note">${question.note}</div>` : ''}
+      `;
+
+      area.querySelectorAll('.choice').forEach(label => {
+        label.addEventListener('click', () => {
+          area.querySelectorAll('.choice').forEach(x => x.classList.remove('selected'));
+          label.classList.add('selected');
+        });
+      });
+      typeset(area);
+    }
+
+    function renderMatching(question) {
+      const area = $('questionArea');
+      const choices = question.termChoices;
+      area.innerHTML = `
+        <div class="type-badge">${htmlEscape(question.label)}</div>
+        <div class="question">${question.prompt}</div>
+        <div class="match-grid" id="matchGrid">
+          ${question.rows.map((row, idx) => `
+            <div class="match-row">
+              <div class="match-def"><strong>${idx + 1}.</strong> ${htmlEscape(row.definition)}</div>
+              <select class="match-select" data-row="${idx}" aria-label="Answer for definition ${idx + 1}">
+                <option value="">Choose a term…</option>
+                ${choices.map((term, j) => `<option value="${j}">${choiceLetters[j]}. ${htmlEscape(term)}</option>`).join('')}
+              </select>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function feedbackBox(isCorrect, bodyHtml) {
+      return `
+        <div class="feedback ${isCorrect ? 'good' : 'bad'}">
+          <h2>${isCorrect ? '✓ Correct' : '✗ Incorrect'}</h2>
+          ${bodyHtml}
+        </div>
+      `;
+    }
+
+    function distractorElements(correct, count = 3, sameGeneralArea = true) {
+      let pool = elements.filter(e => e.symbol !== correct.symbol);
+      if (sameGeneralArea) {
+        pool = pool.sort((a, b) => Math.abs(a.z - correct.z) - Math.abs(b.z - correct.z));
+        pool = pool.slice(0, Math.min(10, pool.length));
+      }
+      return sample(pool, count);
+    }
+
+    // -----------------------------
+    // Question generators
+    // -----------------------------
+    function q1StableGainLose() {
+      const el = pick(elements);
+      const valence = groupValence(el.group);
+      const gain = el.charge < 0;
+      const amount = Math.abs(el.charge);
+      const correctText = `${el.name[0].toUpperCase() + el.name.slice(1)} ${gain ? 'gains' : 'loses'} ${amount} electron${amount === 1 ? '' : 's'}`;
+
+      const optionTexts = [
+        correctText,
+        `${el.name[0].toUpperCase() + el.name.slice(1)} ${gain ? 'loses' : 'gains'} ${amount} electron${amount === 1 ? '' : 's'}`,
+        `${el.name[0].toUpperCase() + el.name.slice(1)} ${gain ? 'gains' : 'loses'} ${Math.min(4, amount + 1)} electrons`,
+        `${el.name[0].toUpperCase() + el.name.slice(1)} ${gain ? 'loses' : 'gains'} ${Math.min(4, amount + 1)} electrons`
+      ];
+
+      const shuffled = shuffle(optionTexts.map(t => ({ text: t, key: t })));
+      const correctIndex = shuffled.findIndex(x => x.key === correctText);
+
+      return {
+        kind: 'mc',
+        label: 'Type 1 · Stable ion: gain or lose electrons',
+        prompt: `How many electrons will ${el.name} (${el.symbol}) gain or lose to form its common stable ion?`,
+        options: shuffled,
+        correctIndex,
+        explanation: () => {
+          const operation = gain ? 'gain' : 'lose';
+          const math = gain ? `8 - ${valence} = ${amount}` : `${valence} valence electron${valence === 1 ? '' : 's'} are lost`;
+          return `
+            <p><strong>${el.name[0].toUpperCase() + el.name.slice(1)} ${gain ? 'gains' : 'loses'} ${amount} electron${amount === 1 ? '' : 's'} to become stable.</strong></p>
+            <h3>Why ${el.name[0].toUpperCase() + el.name.slice(1)} ${gain ? 'Needs Electrons' : 'Loses Electrons'}</h3>
+            <ul>
+              <li><strong>Valence electrons:</strong> ${el.name[0].toUpperCase() + el.name.slice(1)} is in Group ${el.group}, so it has ${valence} valence electron${valence === 1 ? '' : 's'}.</li>
+              <li><strong>Octet rule:</strong> Main-group atoms often form ions that give them a filled outer shell.</li>
+              <li><strong>The math:</strong> ${math}, so the atom tends to ${operation} ${amount} electron${amount === 1 ? '' : 's'}.</li>
+              <li><strong>Stable ion:</strong> ${ionLatex(el)}</li>
+            </ul>`;
+        }
+      };
+    }
+
+    function q2IdentifyElementFromIon() {
+      const el = pick(elements);
+      const electrons = el.z - el.charge;
+      const distractors = distractorElements(el, 3);
+      const opts = shuffle([el, ...distractors]).map(e => ({
+        text: `${e.name[0].toUpperCase() + e.name.slice(1)} (${e.symbol})`,
+        symbol: e.symbol
+      }));
+      const correctIndex = opts.findIndex(o => o.symbol === el.symbol);
+      const chargeDisplay = el.charge > 0 ? `+${el.charge}` : `${el.charge}`;
+
+      return {
+        kind: 'mc',
+        label: 'Type 2 · Identify an element from ion electrons and charge',
+        prompt: `What element has <strong>${electrons} electrons</strong> and a <strong>${chargeDisplay} charge</strong>?`,
+        options: opts,
+        correctIndex,
+        explanation: () => {
+          const relation = el.charge > 0
+            ? `${electrons} + ${el.charge} = ${el.z}`
+            : `${electrons} - ${Math.abs(el.charge)} = ${el.z}`;
+          const action = el.charge > 0 ? `lost ${el.charge}` : `gained ${Math.abs(el.charge)}`;
+          return `
+            <p>The element is <strong>${el.name} (${el.symbol})</strong>, written as ${ionLatex(el)}.</p>
+            <ul>
+              <li>An ion's charge equals <strong>protons − electrons</strong>.</li>
+              <li>Rearranging gives the number of protons: <strong>${relation}</strong>.</li>
+              <li>${el.z} protons means atomic number ${el.z}, which is ${el.name}.</li>
+              <li>The ion has ${action} electron${Math.abs(el.charge) === 1 ? '' : 's'} relative to the neutral atom.</li>
+            </ul>`;
+        }
+      };
+    }
+
+    function q3Matching() {
+      const selected = sample(matchingTerms, 5);
+      const rows = shuffle(selected.map(x => ({ ...x })));
+      const termChoices = shuffle(selected.map(x => x.term));
+      return {
+        kind: 'matching',
+        label: 'Type 3 · Match terms and definitions',
+        prompt: 'Match each definition with the correct chemistry term. Use each drop-down once.',
+        rows,
+        termChoices,
+        explanation: () => `
+          <h3>Correct Matches</h3>
+          <ol>${rows.map(row => `<li><strong>${htmlEscape(row.term)}</strong> — ${htmlEscape(row.definition)}</li>`).join('')}</ol>`
+      };
+    }
+
+    function q4AIsotopeComparison() {
+      const candidates = elements.filter(e => e.masses.length >= 2);
+      const el = pick(candidates);
+      const [m1, m2] = sample(el.masses, 2).sort((a, b) => a - b);
+      const n1 = m1 - el.z;
+      const n2 = m2 - el.z;
+      const correct = `They have the same number of protons and electrons, but different numbers of neutrons.`;
+      const opts = shuffle([
+        correct,
+        'They have the same number of protons, but different numbers of electrons and neutrons.',
+        'They have different numbers of protons and electrons, but the same number of neutrons.'
+      ].map(text => ({ text })));
+      const correctIndex = opts.findIndex(x => x.text === correct);
+
+      return {
+        kind: 'mc',
+        label: 'Type 4A · Compare isotopes',
+        prompt: `Which statement is correct about neutral <strong>${el.name}-${m1}</strong> and <strong>${el.name}-${m2}</strong>?`,
+        options: opts,
+        correctIndex,
+        explanation: () => `
+          <p><strong>They have the same number of protons and electrons, but different numbers of neutrons.</strong></p>
+          <ul>
+            <li>Both are ${el.name}, so both must have <strong>${el.z} protons</strong>.</li>
+            <li>They are neutral, so both have <strong>${el.z} electrons</strong>.</li>
+            <li>${el.name}-${m1}: ${m1} − ${el.z} = <strong>${n1} neutrons</strong>.</li>
+            <li>${el.name}-${m2}: ${m2} − ${el.z} = <strong>${n2} neutrons</strong>.</li>
+          </ul>`
+      };
+    }
+
+    function q4BNuclearSymbol() {
+      const el = pick(elements);
+      let neutrons;
+      let mass;
+      if (el.masses.length) {
+        mass = pick(el.masses);
+        neutrons = mass - el.z;
+      } else {
+        neutrons = el.z + randInt(0, 10);
+        mass = el.z + neutrons;
+      }
+
+      const correct = isotopeLatex(el, mass, 0);
+      const optionsRaw = [
+        { html: correct, key: 'correct' },
+        { html: `\\(^{${el.z}}_{${mass}}\\text{${el.symbol}}\\)`, key: 'swap' },
+        { html: `\\(^{${mass}}_{${neutrons === el.z ? el.z + 1 : neutrons}}\\text{${el.symbol}}\\)`, key: 'neutron-bottom' },
+        { html: `\\(^{${el.z}}_{${neutrons}}\\text{${el.symbol}}\\)`, key: 'z-over-n' }
+      ];
+      const opts = shuffle(optionsRaw);
+      const correctIndex = opts.findIndex(x => x.key === 'correct');
+
+      return {
+        kind: 'mc',
+        label: 'Type 4B · Nuclear symbol notation',
+        prompt: `What is the symbol notation for a <strong>neutral atom</strong> with <strong>${el.z} electrons</strong> and <strong>${neutrons} neutrons</strong>?`,
+        options: opts,
+        correctIndex,
+        explanation: () => `
+          <p>The correct notation is <strong>${correct}</strong>.</p>
+          <h3>Breakdown of the Notation</h3>
+          <ul>
+            <li><strong>Element symbol (${el.symbol}):</strong> A neutral atom with ${el.z} electrons also has ${el.z} protons. Atomic number ${el.z} is ${el.name}.</li>
+            <li><strong>Mass number (${mass}):</strong> protons + neutrons = ${el.z} + ${neutrons} = ${mass}.</li>
+            <li><strong>Atomic number (${el.z}):</strong> written at the lower left because it is the number of protons.</li>
+          </ul>`
+      };
+    }
+
+    function q5StableCationElectrons() {
+      const pool = elements.filter(e => e.charge > 0);
+      const el = pick(pool);
+      const ionElectrons = el.z - el.charge;
+      const nums = uniqueNumbers(ionElectrons, 4, 0, 60, 5);
+      const options = nums.map(n => ({ text: `${n} electron${n === 1 ? '' : 's'}`, value: n }));
+      const correctIndex = options.findIndex(o => o.value === ionElectrons);
+      const valence = groupValence(el.group);
+
+      return {
+        kind: 'mc',
+        label: 'Type 5 · Electrons in a stable cation',
+        prompt: `How many electrons does the stable <strong>${el.symbol} ion</strong> have?`,
+        options,
+        correctIndex,
+        explanation: () => `
+          <p>The stable ${el.name} ion has <strong>${ionElectrons} electrons</strong>.</p>
+          <h3>Step-by-Step Breakdown</h3>
+          <ul>
+            <li><strong>Neutral atom:</strong> ${el.name[0].toUpperCase() + el.name.slice(1)} has atomic number ${el.z}, so a neutral atom has ${el.z} electrons.</li>
+            <li><strong>Ion charge:</strong> Group ${el.group} gives it ${valence} valence electron${valence === 1 ? '' : 's'}, and it commonly loses ${el.charge} to form ${ionLatex(el)}.</li>
+            <li><strong>Final electron count:</strong> ${el.z} − ${el.charge} = <strong>${ionElectrons}</strong>.</li>
+          </ul>`
+      };
+    }
+
+    function q6PNEFromIonNotation() {
+      const el = pick(elements);
+      const mass = pick(el.masses);
+      let charge = el.charge;
+      // Occasionally vary the magnitude to practice the arithmetic, while keeping it chemically plausible in sign.
+      if (Math.random() < 0.3) {
+        const mag = Math.max(1, Math.min(3, Math.abs(el.charge) + pick([-1, 0, 1])));
+        charge = el.charge > 0 ? mag : -mag;
+      }
+      const protons = el.z;
+      const neutrons = mass - el.z;
+      const electrons = el.z - charge;
+      const correctText = `${protons} protons, ${neutrons} neutrons, ${electrons} electrons`;
+      const wrong1 = `${protons} protons, ${mass} neutrons, ${electrons} electrons`;
+      const wrong2 = `${protons} protons, ${neutrons} neutrons, ${el.z + charge} electrons`;
+      const wrong3 = `${protons} protons, ${neutrons + 1} neutrons, ${electrons} electrons`;
+      const options = shuffle([correctText, wrong1, wrong2, wrong3].map(text => ({ text })));
+      const correctIndex = options.findIndex(o => o.text === correctText);
+
+      return {
+        kind: 'mc',
+        label: 'Type 6 · Protons, neutrons, and electrons from ion notation',
+        prompt: `How many protons, neutrons, and electrons are in ${isotopeLatex(el, mass, charge)}?`,
+        options,
+        correctIndex,
+        explanation: () => `
+          <p>For ${isotopeLatex(el, mass, charge)}, there are <strong>${protons} protons, ${neutrons} neutrons, and ${electrons} electrons</strong>.</p>
+          <h3>Step-by-Step Breakdown</h3>
+          <ul>
+            <li><strong>Protons:</strong> the lower-left number is the atomic number, so there are ${protons} protons.</li>
+            <li><strong>Neutrons:</strong> mass number − atomic number = ${mass} − ${protons} = <strong>${neutrons}</strong>.</li>
+            <li><strong>Electrons:</strong> use <em>electrons = protons − charge</em>. Here, ${protons} − (${charge}) = <strong>${electrons}</strong>.</li>
+          </ul>`
+      };
+    }
+
+    function q7StableAnionElectrons() {
+      const pool = elements.filter(e => e.charge < 0);
+      const el = pick(pool);
+      const ionElectrons = el.z - el.charge;
+      const nums = uniqueNumbers(ionElectrons, 4, 0, 70, 6);
+      const options = nums.map(n => ({ text: `${n} electron${n === 1 ? '' : 's'}`, value: n }));
+      const correctIndex = options.findIndex(o => o.value === ionElectrons);
+      const valence = groupValence(el.group);
+      const gain = Math.abs(el.charge);
+
+      return {
+        kind: 'mc',
+        label: 'Type 7 · Electrons in a stable anion',
+        prompt: `How many electrons does the stable <strong>${el.symbol} ion</strong> have?`,
+        options,
+        correctIndex,
+        explanation: () => `
+          <p>The stable ${el.name} ion has <strong>${ionElectrons} electrons</strong>.</p>
+          <h3>Step-by-Step Breakdown</h3>
+          <ul>
+            <li><strong>Neutral atom:</strong> Atomic number ${el.z} means ${el.z} electrons when neutral.</li>
+            <li><strong>Ion charge:</strong> ${el.name[0].toUpperCase() + el.name.slice(1)} is in Group ${el.group}, so it has ${valence} valence electrons and commonly gains ${gain} electron${gain === 1 ? '' : 's'} to form ${ionLatex(el)}.</li>
+            <li><strong>Final electron count:</strong> ${el.z} + ${gain} = <strong>${ionElectrons}</strong>.</li>
+          </ul>`
+      };
+    }
+
+    function q8IsotopeDifference() {
+      const candidates = periodicityPool.filter(e => ![18].includes(e.group));
+      const el = pick(candidates);
+      const correct = 'neutrons';
+      const opts = shuffle(['protons', 'electrons', 'neutrons'].map(text => ({ text })));
+      const correctIndex = opts.findIndex(o => o.text === correct);
+      const exampleMass1 = Math.max(el.z + 1, Math.round(el.z * 2));
+      const exampleMass2 = exampleMass1 + 1;
+
+      return {
+        kind: 'mc',
+        label: 'Type 8 · Isotopes',
+        prompt: `Isotopes of ${el.name} (${el.symbol}) differ with respect to the number of __________.`,
+        options: opts,
+        correctIndex,
+        explanation: () => `
+          <p>Isotopes of ${el.name} differ in the number of <strong>neutrons</strong>.</p>
+          <h3>Key Concept Breakdown</h3>
+          <ul>
+            <li><strong>Same protons:</strong> every ${el.name} atom has ${el.z} protons. Proton count determines the element.</li>
+            <li><strong>Different neutrons:</strong> changing the neutron count changes the isotope and therefore the mass number.</li>
+            <li><strong>Electrons:</strong> neutral isotopes of the same element have the same number of electrons; ionization is a separate issue.</li>
+          </ul>`
+      };
+    }
+
+    function q9Periodicity() {
+      const groupsWithMultiple = [1, 2, 13, 14, 15, 16, 17, 18];
+      const group = pick(groupsWithMultiple);
+      const sameGroup = periodicityPool.filter(e => e.group === group);
+      const base = pick(sameGroup);
+      const correctEl = pick(sameGroup.filter(e => e.symbol !== base.symbol));
+      const distractors = sample(periodicityPool.filter(e => e.group !== group), 2);
+      const optionsEls = shuffle([correctEl, ...distractors]);
+      const options = optionsEls.map(e => ({ text: `${e.name[0].toUpperCase() + e.name.slice(1)} (${e.symbol})`, symbol: e.symbol }));
+      const correctIndex = options.findIndex(o => o.symbol === correctEl.symbol);
+      const valence = groupValence(group);
+
+      return {
+        kind: 'mc',
+        label: 'Type 9 · Periodicity and similar chemical behavior',
+        prompt: `Due to periodicity, which element has chemical behavior most similar to <strong>${base.name} (${base.symbol})</strong>?`,
+        options,
+        correctIndex,
+        explanation: () => `
+          <p>The best answer is <strong>${correctEl.name} (${correctEl.symbol})</strong>.</p>
+          <p>Elements in the same vertical column, or <strong>group</strong>, have similar valence-electron patterns and therefore often show similar chemical behavior.</p>
+          <ul>
+            <li>${base.name[0].toUpperCase() + base.name.slice(1)} is in <strong>Group ${group}</strong>${valence ? ` and has ${valence} valence electron${valence === 1 ? '' : 's'}` : ''}.</li>
+            <li>${correctEl.name[0].toUpperCase() + correctEl.name.slice(1)} is also in <strong>Group ${group}</strong>.</li>
+            <li>The other choices come from different groups and have different valence-electron patterns.</li>
+          </ul>`
+      };
+    }
+
+    function q10GroupsTrueFalse() {
+      const statements = [
+        {
+          text: 'The transition metals are Groups 3–12, and the representative (main-group) elements are Groups 1–2 and 13–18.',
+          correct: true,
+          why: 'This is the standard division used in introductory chemistry: Groups 3–12 are the d-block transition metals, while Groups 1–2 and 13–18 are the main-group elements.'
+        },
+        {
+          text: 'The transition metals are Groups 1–2, and the representative elements are Groups 3–18.',
+          correct: false,
+          why: 'Groups 1–2 are main-group elements, not transition metals. The transition metals occupy Groups 3–12.'
+        },
+        {
+          text: 'The representative elements are Groups 1–2 and 13–18.',
+          correct: true,
+          why: 'Representative elements are another name for the main-group elements: Groups 1–2 and 13–18.'
+        },
+        {
+          text: 'Groups 13–18 are transition metals.',
+          correct: false,
+          why: 'Groups 13–18 belong to the main-group p block; Groups 3–12 are the transition-metal region.'
+        }
+      ];
+      const s = pick(statements);
+      const options = [{ text: 'True', value: true }, { text: 'False', value: false }];
+      const correctIndex = options.findIndex(o => o.value === s.correct);
+      return {
+        kind: 'mc',
+        label: 'Type 10 · Periodic-table groups: True or False',
+        prompt: s.text,
+        options,
+        correctIndex,
+        explanation: () => `
+          <p><strong>${s.correct ? 'True' : 'False'}.</strong> ${s.why}</p>
+          <h3>Key Details</h3>
+          <ul>
+            <li><strong>Representative / main-group elements:</strong> Groups 1–2 and 13–18.</li>
+            <li><strong>Transition metals:</strong> Groups 3–12.</li>
+          </ul>`
+      };
+    }
+
+    function q11Cation() {
+      const correct = 'A cation is an atom or ion that has lost electrons and has a positive charge.';
+      const opts = shuffle([
+        correct,
+        'A cation is an atom or ion that has gained electrons and has a negative charge.',
+        'A cation is an atom or ion that has gained electrons and has a positive charge.'
+      ].map(text => ({ text })));
+      const correctIndex = opts.findIndex(o => o.text === correct);
+      return {
+        kind: 'mc',
+        label: 'Type 11 · Cations',
+        prompt: 'What is a cation?',
+        options: opts,
+        correctIndex,
+        explanation: () => `
+          <p>A <strong>cation</strong> is an atom or ion that has <strong>lost electrons</strong> and therefore has a <strong>positive charge</strong>.</p>
+          <h3>Easy Ways to Remember</h3>
+          <ul>
+            <li><strong>The “t” trick:</strong> the <em>t</em> in <em>cation</em> can remind you of a plus sign (+).</li>
+            <li><strong>Cats are “paw-sitive”:</strong> a playful reminder that cations are positive.</li>
+          </ul>`
+      };
+    }
+
+    function q12AtomicNumber() {
+      const correct = 'atomic number';
+      const options = shuffle(['atomic number', 'mass number', 'atomic mass'].map(text => ({ text })));
+      const correctIndex = options.findIndex(o => o.text === correct);
+      return {
+        kind: 'mc',
+        label: 'Type 12 · Atomic number',
+        prompt: 'The number of protons in one atom of an element is that element’s __________.',
+        options,
+        correctIndex,
+        explanation: () => `
+          <p>The correct answer is <strong>atomic number</strong>.</p>
+          <h3>Key Term Meanings</h3>
+          <ul>
+            <li><strong>Atomic number:</strong> the exact number of protons in the nucleus; this determines the element's identity.</li>
+            <li><strong>Mass number:</strong> protons + neutrons for one particular isotope.</li>
+            <li><strong>Atomic mass:</strong> the weighted average mass of the naturally occurring isotopes.</li>
+          </ul>`
+      };
+    }
+
+    function q13Anion() {
+      const correct = 'An anion is an atom or ion that has gained electrons and has a negative charge.';
+      const opts = shuffle([
+        correct,
+        'An anion is an atom or ion that has gained electrons and has a positive charge.',
+        'An anion is an atom or ion that has lost electrons and has a negative charge.'
+      ].map(text => ({ text })));
+      const correctIndex = opts.findIndex(o => o.text === correct);
+      return {
+        kind: 'mc',
+        label: 'Type 13 · Anions',
+        prompt: 'What is an anion?',
+        options: opts,
+        correctIndex,
+        explanation: () => `
+          <p>An <strong>anion</strong> is an atom or ion that has <strong>gained electrons</strong> and therefore has a <strong>negative charge</strong>.</p>
+          <h3>Easy Ways to Remember</h3>
+          <ul>
+            <li><strong>The “N” trick:</strong> think “A Negative ION.”</li>
+            <li>Gaining negatively charged electrons makes the ion's net charge more negative.</li>
+          </ul>`
+      };
+    }
+
+    const generators = [
+      { id: '1',   name: 'Type 1 — Gain/lose electrons for stability', fn: q1StableGainLose },
+      { id: '2',   name: 'Type 2 — Identify element from electrons + charge', fn: q2IdentifyElementFromIon },
+      { id: '3',   name: 'Type 3 — Match definitions', fn: q3Matching },
+      { id: '4a',  name: 'Type 4A — Compare isotopes', fn: q4AIsotopeComparison },
+      { id: '4b',  name: 'Type 4B — Nuclear symbol notation', fn: q4BNuclearSymbol },
+      { id: '5',   name: 'Type 5 — Electrons in stable cation', fn: q5StableCationElectrons },
+      { id: '6',   name: 'Type 6 — Protons/neutrons/electrons in an ion', fn: q6PNEFromIonNotation },
+      { id: '7',   name: 'Type 7 — Electrons in stable anion', fn: q7StableAnionElectrons },
+      { id: '8',   name: 'Type 8 — What differs in isotopes?', fn: q8IsotopeDifference },
+      { id: '9',   name: 'Type 9 — Periodicity / similar behavior', fn: q9Periodicity },
+      { id: '10',  name: 'Type 10 — Transition vs representative groups', fn: q10GroupsTrueFalse },
+      { id: '11',  name: 'Type 11 — What is a cation?', fn: q11Cation },
+      { id: '12',  name: 'Type 12 — Proton count terminology', fn: q12AtomicNumber },
+      { id: '13',  name: 'Type 13 — What is an anion?', fn: q13Anion }
+    ];
+
+    // -----------------------------
+    // App state + scoring
+    // -----------------------------
+    const STORAGE_KEY = 'chemistryQuizScoreV1';
+    let state = loadScore();
+    let currentQuestion = null;
+    let answeredCurrent = false;
+    let lastGeneratorId = null;
+
+    function loadScore() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { correct: 0, incorrect: 0 };
+        const parsed = JSON.parse(raw);
+        return {
+          correct: Number(parsed.correct) || 0,
+          incorrect: Number(parsed.incorrect) || 0
+        };
+      } catch {
+        return { correct: 0, incorrect: 0 };
+      }
+    }
+
+    function saveScore() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+    }
+
+    function updateScoreboard() {
+      const answered = state.correct + state.incorrect;
+      const pct = answered ? Math.round((state.correct / answered) * 100) : 0;
+      $('correctScore').textContent = state.correct;
+      $('incorrectScore').textContent = state.incorrect;
+      $('answeredScore').textContent = answered;
+      $('percentScore').textContent = `${pct}%`;
+    }
+
+    function recordResult(correct) {
+      if (correct) state.correct += 1;
+      else state.incorrect += 1;
+      saveScore();
+      updateScoreboard();
+    }
+
+    function setupModeSelect() {
+      const select = $('modeSelect');
+      select.innerHTML = `<option value="mixed">Mixed — all question types</option>` +
+        generators.map(g => `<option value="${g.id}">${htmlEscape(g.name)}</option>`).join('');
+    }
+
+    function chooseGenerator() {
+      const mode = $('modeSelect').value;
+      if (mode !== 'mixed') return generators.find(g => g.id === mode);
+      let candidates = generators;
+      if (lastGeneratorId && generators.length > 1) {
+        candidates = generators.filter(g => g.id !== lastGeneratorId);
+      }
+      return pick(candidates);
+    }
+
+    function newQuestion() {
+      const generator = chooseGenerator();
+      lastGeneratorId = generator.id;
+      currentQuestion = generator.fn();
+      answeredCurrent = false;
+      $('feedbackArea').innerHTML = '';
+      $('submitBtn').hidden = false;
+      $('submitBtn').disabled = false;
+      $('nextBtn').hidden = true;
+
+      if (currentQuestion.kind === 'matching') renderMatching(currentQuestion);
+      else renderMC(currentQuestion);
+    }
+
+    function checkMC() {
+      const checked = document.querySelector('input[name="answer"]:checked');
+      if (!checked) {
+        $('feedbackArea').innerHTML = `<div class="feedback bad"><h2>Choose an answer first.</h2><p>Select one choice, then click <strong>Check Answer</strong>.</p></div>`;
+        return null;
+      }
+
+      const selectedIndex = Number(checked.value);
+      const correct = selectedIndex === currentQuestion.correctIndex;
+      document.querySelectorAll('.choice').forEach((label, i) => {
+        const radio = label.querySelector('input');
+        radio.disabled = true;
+        if (i === currentQuestion.correctIndex) label.classList.add('correct');
+        if (i === selectedIndex && !correct) label.classList.add('incorrect');
+      });
+      return correct;
+    }
+
+    function checkMatching() {
+      const selects = [...document.querySelectorAll('.match-select')];
+      if (selects.some(s => !s.value)) {
+        $('feedbackArea').innerHTML = `<div class="feedback bad"><h2>Complete all five matches first.</h2><p>Choose one term for every definition, then click <strong>Check Answer</strong>.</p></div>`;
+        return null;
+      }
+
+      let allCorrect = true;
+      selects.forEach((sel, idx) => {
+        const selectedTerm = currentQuestion.termChoices[Number(sel.value)];
+        const expected = currentQuestion.rows[idx].term;
+        const ok = selectedTerm === expected;
+        allCorrect = allCorrect && ok;
+        sel.disabled = true;
+        sel.classList.add(ok ? 'correct' : 'incorrect');
+        if (!ok) {
+          const note = document.createElement('div');
+          note.className = 'correct-answer-note';
+          note.innerHTML = `Correct: <strong>${htmlEscape(expected)}</strong>`;
+          sel.insertAdjacentElement('afterend', note);
+        }
+      });
+      return allCorrect;
+    }
+
+    function submitAnswer() {
+      if (answeredCurrent) return;
+      const correct = currentQuestion.kind === 'matching' ? checkMatching() : checkMC();
+      if (correct === null) return;
+
+      answeredCurrent = true;
+      recordResult(correct);
+      $('submitBtn').hidden = true;
+      $('nextBtn').hidden = false;
+      $('feedbackArea').innerHTML = feedbackBox(correct, currentQuestion.explanation());
+      typeset($('feedbackArea'));
+    }
+
+    $('submitBtn').addEventListener('click', submitAnswer);
+    $('nextBtn').addEventListener('click', newQuestion);
+    $('newBtn').addEventListener('click', newQuestion);
+    $('modeSelect').addEventListener('change', newQuestion);
+    $('resetBtn').addEventListener('click', () => {
+      state = { correct: 0, incorrect: 0 };
+      saveScore();
+      updateScoreboard();
+      $('feedbackArea').innerHTML = `<div class="feedback good"><h2>Score reset.</h2><p>Your running score is back to zero.</p></div>`;
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !answeredCurrent) submitAnswer();
+      if (event.key.toLowerCase() === 'n' && answeredCurrent) newQuestion();
+    });
+
+    setupModeSelect();
+    updateScoreboard();
+    newQuestion();
+  </script>
+</body>
+</html>
