@@ -1,10 +1,13 @@
-# Chemistry Foundations Quiz
+# Chemistry Foundations Quiz - Week 2
 
 A single-page, browser-based chemistry quiz application for practicing introductory chemistry concepts related to atomic structure, ions, isotopes, periodicity, and nuclear symbol notation.
 
 This app was designed specifically for Midlands Technical College Chemistry 110 (CHM-110) taught by Professor Gordon.
 
 The quiz generates randomized questions and answer choices rather than relying on a fixed question bank. It gives immediate feedback, detailed step-by-step explanations, and keeps a running score so students can practice the same concepts repeatedly with different values and elements.
+
+<img width="335" alt="image" src="https://github.com/user-attachments/assets/88d76a01-c2ca-4cf6-a1a5-45a2ffaf98a2" />
+Live link to app: https://realityexpander.github.io/Chemistry_Foundations_Quiz_CHM-110/
 
 ## Main Purpose
 
