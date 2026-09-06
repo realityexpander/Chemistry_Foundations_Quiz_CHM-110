@@ -128,9 +128,7 @@ Examples include concepts such as:
 
 Questions use complete nuclear/ion notation such as:
 
-$\[
-{}^{97}_{42}\mathrm{Mo}^{2+}
-\]$
+${}^{97}_{42}\mathrm{Mo}^{2+}$
 
 Students calculate:
 
@@ -192,7 +190,118 @@ The two isotope-related formats originally identified as Question Type 4 are rep
 - **Type 4A — Compare isotopes**
 - **Type 4B — Nuclear symbol notation**
 
-## Libraries Used
+## Score Tracking
+
+The quiz maintains a running record of:
+
+```text
+Correct
+Incorrect
+Answered
+Percent Correct
+```
+
+Score information is saved using browser `localStorage` when available. This means the current score can survive a page refresh or browser restart on the same browser/device.
+
+No score information is transmitted to a server.
+
+The score can also be reset from within the application.
+
+## Random Question Generation
+
+The application uses JavaScript question-generator functions rather than a single static list of questions.
+
+Depending on the question type, the generator can randomize values such as:
+
+- element
+- atomic number
+- mass number
+- neutron count
+- electron count
+- ion charge
+- isotope pair
+- periodic-table group relationships
+- correct and incorrect answer choices
+- answer-choice order
+
+This allows the same chemistry rule to be practiced repeatedly with different examples.
+
+## Browser Requirements
+
+A modern browser with JavaScript enabled is required.
+
+Recommended browsers include current versions of:
+
+- Google Chrome
+- Mozilla Firefox
+- Microsoft Edge
+- Apple Safari
+
+Internet access is required for the default MathJax CDN configuration.
+
+## Educational Use
+
+This application is intended as a practice and study aid for introductory chemistry. The generated explanations are designed to reinforce the reasoning behind each answer rather than simply identify whether an answer is correct.
+
+It is particularly useful for practicing relationships among:
+
+```text
+atomic number -> protons
+mass number -> protons + neutrons
+ion charge -> relationship between protons and electrons
+periodic-table group -> common valence behavior
+```
+
+## Customization
+
+Because the project uses plain HTML, CSS, and JavaScript, additional question generators can be added directly to the source without requiring a compilation or build step.
+
+Possible future additions include:
+
+- electron configurations
+- Lewis dot structures
+- periodic trends
+- ionic compound formulas
+- molecular naming
+- significant figures
+- dimensional analysis
+- molar mass calculations
+- balancing chemical equations
+
+## Project Structure
+
+The project can be distributed as a single file:
+
+```text
+chemistry_quiz.html
+```
+
+The file contains:
+
+```text
+HTML        Page structure
+CSS         Interface and responsive styling
+JavaScript  Quiz logic and question generation
+MathJax     Loaded externally for LaTeX rendering
+```
+
+A minimal repository might therefore look like:
+
+```text
+chemistry-quiz/
+├── chemistry_quiz.html
+└── README.md
+```
+
+For GitHub Pages, a convenient structure is:
+
+```text
+chemistry-quiz/
+├── index.html
+└── README.md
+```
+
+- ## Libraries Used
 
 ### MathJax 4
 
@@ -207,13 +316,13 @@ The application loads MathJax from the jsDelivr CDN:
 MathJax is used for notation such as ions and isotope symbols, for example:
 
 ```latex
-\(\mathrm{Sr}^{2+}\)
+$\(\mathrm{Sr}^{2+}\)$
 ```
 
 and:
 
 ```latex
-\({}^{97}_{42}\mathrm{Mo}^{2+}\)
+$\({}^{97}_{42}\mathrm{Mo}^{2+}\)$
 ```
 
 Because MathJax is loaded from a CDN, an internet connection is normally required when the page is first opened unless MathJax is modified to be hosted locally.
@@ -300,117 +409,6 @@ index.html
 ```
 
 The application can then be served as a completely static GitHub Pages site.
-
-## Score Tracking
-
-The quiz maintains a running record of:
-
-```text
-Correct
-Incorrect
-Answered
-Percent Correct
-```
-
-Score information is saved using browser `localStorage` when available. This means the current score can survive a page refresh or browser restart on the same browser/device.
-
-No score information is transmitted to a server.
-
-The score can also be reset from within the application.
-
-## Random Question Generation
-
-The application uses JavaScript question-generator functions rather than a single static list of questions.
-
-Depending on the question type, the generator can randomize values such as:
-
-- element
-- atomic number
-- mass number
-- neutron count
-- electron count
-- ion charge
-- isotope pair
-- periodic-table group relationships
-- correct and incorrect answer choices
-- answer-choice order
-
-This allows the same chemistry rule to be practiced repeatedly with different examples.
-
-## Project Structure
-
-The project can be distributed as a single file:
-
-```text
-chemistry_quiz.html
-```
-
-The file contains:
-
-```text
-HTML        Page structure
-CSS         Interface and responsive styling
-JavaScript  Quiz logic and question generation
-MathJax     Loaded externally for LaTeX rendering
-```
-
-A minimal repository might therefore look like:
-
-```text
-chemistry-quiz/
-├── chemistry_quiz.html
-└── README.md
-```
-
-For GitHub Pages, a convenient structure is:
-
-```text
-chemistry-quiz/
-├── index.html
-└── README.md
-```
-
-## Browser Requirements
-
-A modern browser with JavaScript enabled is required.
-
-Recommended browsers include current versions of:
-
-- Google Chrome
-- Mozilla Firefox
-- Microsoft Edge
-- Apple Safari
-
-Internet access is required for the default MathJax CDN configuration.
-
-## Educational Use
-
-This application is intended as a practice and study aid for introductory chemistry. The generated explanations are designed to reinforce the reasoning behind each answer rather than simply identify whether an answer is correct.
-
-It is particularly useful for practicing relationships among:
-
-```text
-atomic number -> protons
-mass number -> protons + neutrons
-ion charge -> relationship between protons and electrons
-periodic-table group -> common valence behavior
-```
-
-## Customization
-
-Because the project uses plain HTML, CSS, and JavaScript, additional question generators can be added directly to the source without requiring a compilation or build step.
-
-Possible future additions include:
-
-- electron configurations
-- Lewis dot structures
-- periodic trends
-- ionic compound formulas
-- molecular naming
-- significant figures
-- dimensional analysis
-- molar mass calculations
-- balancing chemical equations
 
 ## License
 
